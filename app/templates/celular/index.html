@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% block body %}
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+{% for message in messages%}
+<div class="alert alert-success" role="alert">
+  {{ message }}
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+<div class="container text-center">
+  <div class="row align-items-start">
+    {% if celulares %}
+    <div class="col">
+      <h2>Lista de Celulares</h2>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Marca</th>
+            <th scope="col">Modelo</th>
+            <th scope="col">Color</th>
+            <th scope="col">Camara</th>
+            <th scope="col">Pantalla</th>
+            <th scope="col">CPU</th>
+            <th scope="col">RAM</th>
+            <th scope="col">Almacenameinto</th>
+            <th scope="col">Precio</th>
+            <th scope="col">---</th>
+            <th scope="col">---</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for celular in celulares %}
+          <tr>
+            <th scope="row" class="text-center">{{ celular[1] }}</th>
+            <td class="text-center">{{ celular[2] }}</td>
+            <td class="text-center">{{ celular[3] }}</td>
+            <td class="text-center">{{ celular[4] }}</td>
+            <td class="text-center">{{ celular[5] }}</td>
+            <td class="text-center">{{ celular[6] }}</td>
+            <td class="text-center">{{ celular[7] }}</td>
+            <td class="text-center">{{ celular[8] }}</td>
+            <td class="text-center">{{ celular[9] }}</td>
+            <td><a href="actualizar_celular/{{ celular[0] }}" class="btn btn-primary">Editar</a></td>
+            <td><a href="eliminar_celular/{{ celular[0] }}" class="btn btn-primary">Eliminar</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>      
+    </div>    
+    {% else %}
+    <div class="alert alert-info" role="alert">
+      Lista Vacia, no hay Celulares Registrados.
+    </div>
+    {% endif %}
+
+
+
+
+    <div class="col">
+      <div class="position-fixed m-5">
+        <h1>Registrar Celular</h1>
+        
+        <form method="post" action="{{ url_for('.insertar_celular') }}">
+          <div class="container text-center">
+            <div class="row align-items-start">
+              <label for="id_marca" class="form-label">Marca</label>
+              <input type="text" class="form-control" id="id_marca" name="marca">
+              <label for="id_modelo" class="form-label">Modelo</label>
+              <input type="text" class="form-control" id="id_modelo" name="modelo">
+              <label for="id_color" class="form-label">Color</label>
+              <input type="text" class="form-control" id="id_color" name="color">
+              <div class="col">
+                <label for="id_camara" class="form-label">Camara</label>
+                <input type="text" class="form-control" id="id_camara" name="camara">
+                <label for="id_pantalla" class="form-label">Pantalla</label>
+                <input type="text" class="form-control" id="id_pantalla" name="pantalla">
+                <label for="id_cpu" class="form-label">CPU</label>
+                <input type="text" class="form-control" id="id_cpu" name="cpu">
+              </div>
+              <div class="col">
+                <label for="id_ram" class="form-label">RAM (GB)</label>
+                <input type="text" class="form-control" id="id_ram" name="ram">
+                <label for="id_almacenamiento" class="form-label">Almacenamiento (GB)</label>
+                <input type="text" class="form-control" id="id_almacenamiento" name="almacenamiento">
+                <label for="id_precio" class="form-label">Precio ($)</label>
+                <input type="text" class="form-control" id="id_precio" name="precio">
+              </div>
+            </div>
+          </div>
+          <div id="emailHelp" class="form-text">Los datos del Celular seran registrados.</div>
+          <button type="submit" class="btn btn-primary">Agregar Datos <svg xmlns="http://www.w3.org/2000/svg" width="16"
+              height="16" fill="currentColor" class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
+              <path
+                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z" />
+            </svg></button>            
+        </form>
+      </div>
+    </div>
+    <a href="{{url_for('celular.generar_reporte_cel')}}">Generar reporte PDF</a>
+  </div>
+</div>
+
+
+{% endblock %}

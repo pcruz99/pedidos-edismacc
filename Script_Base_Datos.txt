@@ -1,0 +1,376 @@
+--+++++++++++++++++++++++++++++++CREACION CON USUARIO SYSTEM
+create tablespace ts_edismac datafile 'c:/ts_edismac/df_edismac.dbf' size 50m;
+alter session set "_ORACLE_SCRIPT"=true;
+create user tienda identified by tienda default tablespace ts_edismac temporary tablespace temp;
+create user caja1 identified by caja1 default tablespace ts_edismac temporary tablespace temp;
+create user caja2 identified by caja2 default tablespace ts_edismac temporary tablespace temp;
+grant connect, create session, resource, create view, unlimited tablespace  to tienda;
+grant connect, create session to caja1;
+grant connect, create session to caja2;
+
+--+++++++++++++++++++++++++++++++USUARIO -> tienda ++++++++++++++++++++++
+alter session set NLS_DATE_FORMAT = 'DD-MM-YYYY HH24:MI:SS';
+create sequence autoincre_celu increment by 1 start with 1 nocache;
+create table celular(
+codi_celu number primary key not null,
+marc_celu varchar2(30) not null,
+mode_celu varchar2(30) not null,
+colo_celu varchar2(30) not null,
+cama_celu varchar2(50), --camara
+pant_celu varchar2(50), --pantalla
+proc_celu varchar2(50), --procesador
+ramx_celu number, --memoria ram 
+alma_celu number, --almacenamiento
+prec_celu number(8,2) not null
+);
+
+create sequence autoincre_clie increment by 1 start with 1 nocache;
+create table cliente(
+codi_clie number primary key not null,
+cedu_clie varchar2(10) not null, --cedula
+nomb_clie varchar(30) not null,
+apel_clie varchar(30) not null,
+dire_clie varchar(50),
+tele_clie varchar(10),
+emai_clie varchar(30)
+);
+
+create sequence autoincre_dien increment by 1 start with 1 nocache;
+create table direccion_envio(
+codi_dien number primary key not null,
+capr_dien varchar2(50) not null, --calle principal
+case_dien varchar2(50), -- calle secundaria
+nude_dien number, --numero departamento
+refe_dien varchar2(50) not null, --referencia
+ciud_dien varchar(30) not null, --ciudad
+prov_dien varchar2(30) not null, --provincia
+copo_dien varchar2(10) --codigo postal
+);
+
+create sequence autoincre_pedi increment by 1 start with 1 nocache;
+create table pedido(
+codi_pedi number primary key not null,
+fech_pedi date not null, --fecha del pedido
+tota_pedi number(8,2) not null, --valor total
+obse_pedi varchar2(60), --observaciones
+fk_codi_clie number not null,
+fk_codi_dien number not null,
+constraint rela_pedido_clie foreign key (fk_codi_clie) references cliente(codi_clie),
+constraint rela_pedido_dien foreign key (fk_codi_dien) references direccion_envio(codi_dien)
+);
+
+create sequence autoincre_deta increment by 1 start with 1 nocache;
+create table detalle(
+codi_deta number primary key not null,
+cant_deta number not null,
+fk_codi_celu number not null,
+fk_codi_pedi number not null,
+constraint rela_detalle_celu foreign key (fk_codi_celu) references celular(codi_celu),
+constraint rela_detalle_pedi foreign key (fk_codi_pedi) references pedido(codi_pedi)
+);
+
+--=========================PROCEDIMIENTOS==============================
+--===========================CELULAR===================================
+create or replace
+procedure insertar_celular(marc varchar2, modelo varchar2, color varchar2, camara varchar2, pantalla varchar2
+, proce varchar2, ram number, almace number, precio float)
+is
+begin
+    insert into celular values (autoincre_celu.nextval, marc, modelo, color, camara, pantalla, proce, ram, almace, precio);
+    commit;
+end;
+
+create or replace
+procedure actualizar_celular(codi number, marc varchar2, modelo varchar2, color varchar2, camara varchar2, pantalla varchar2
+, proce varchar2, ram number, almace number, precio float)
+is
+begin
+    update celular set marc_celu = marc, mode_celu=modelo, colo_celu=color, cama_celu=camara, pant_celu=pantalla, proc_celu=proce
+    ,ramx_celu=ram, alma_celu=almace, prec_celu=precio where codi_celu = codi;
+    commit;
+end;
+
+create or replace
+procedure eliminar_celular(codi number)
+is
+begin
+    delete from celular where codi_celu=codi;
+    commit;
+end;
+--=========================PROCEDIMIENTOS==============================
+--===========================CLIENTE===================================
+create or replace
+procedure insertar_cliente (cedula varchar2, nomb varchar2, apell varchar2, dire varchar2, tele varchar2, email varchar2)
+is
+begin
+    insert into cliente values (autoincre_clie.nextval, cedula, nomb, apell, dire, tele, email);
+    commit;
+end;
+
+create or replace
+procedure actualizar_cliente (codi number, cedula varchar2, nomb varchar2, apel varchar2, dire varchar2, tele varchar2, emai varchar2)
+is
+begin
+    update cliente set cedu_clie = cedula, nomb_clie = nomb, apel_clie = apel, dire_clie = dire, tele_clie = tele, emai_clie = emai
+    where codi_clie = codi;
+    commit;
+end;
+
+create or replace
+procedure eliminar_cliente (codi number)
+is
+begin
+    delete from cliente where codi_clie = codi;
+    commit;
+end;
+--=========================PROCEDIMIENTOS==============================
+--===========================DIRECCION ENVIO===================================
+create or replace
+procedure insertar_direccion_envio(calle_prin varchar2, calle_secu varchar2, nume_depa number, refere varchar2, ciudad varchar2, provi varchar2, codi_post varchar2)
+is
+begin
+    insert into direccion_envio values (autoincre_dien.nextval, calle_prin, calle_secu, nume_depa, refere, ciudad, provi, codi_post);
+    commit;
+end;
+
+create or replace
+procedure actualizar_direccion_envio(codigo number, calle_prin varchar2, calle_secu varchar2, nume_depa number, refere varchar2, ciudad varchar2, provi varchar2, codi_post varchar2)
+is
+begin
+    update direccion_envio set capr_dien=calle_prin, case_dien=calle_secu, nude_dien = nume_depa, refe_dien= refere, ciud_dien=ciudad, prov_dien=provi, copo_dien=codi_post
+    where codi_dien = codigo;
+    commit;
+end;
+
+create or replace
+procedure eliminar_direccion_envio(codigo number)
+is
+begin
+    delete from direccion_envio where codi_dien=codigo;
+    commit;
+end;
+--=========================PROCEDIMIENTOS==============================
+--===========================PEDIDOS===================================
+
+create or replace
+procedure insertar_pedido(fecha varchar2, tota float, obser varchar2, fk_codi_clie number, fk_codi_dien number)
+is
+begin
+    insert into pedido values (autoincre_pedi.nextval, to_date(fecha, 'YYYY-MM-DD HH24:MI:SS'), tota, obser, fk_codi_clie, fk_codi_dien);
+    commit;
+end;
+
+create or replace
+procedure actualizar_pedido(codigo number, fecha varchar2, total float, obser varchar2, fk_codi_clie number, fk_codi_dien number)
+is
+begin
+    update pedido set fech_pedi=to_date(fecha, 'YYYY-MM-DD HH24:MI:SS'), tota_pedi=total, obse_pedi=obser, fk_codi_clie=fk_codi_clie, fk_codi_dien=fk_codi_dien where codi_pedi=codigo;
+    commit;
+end;
+
+create or replace
+procedure eliminar_pedido(codigo number)
+is
+begin
+    delete from  pedido where codi_pedi = codigo;
+    commit;
+end;
+
+--=========================PROCEDIMIENTOS==============================
+--===========================DETALLE===================================
+descr detalle;
+create or replace
+procedure insertar_detalle(cantidad number, fk_codi_celu number, fk_codi_pedi number)
+is
+begin
+    insert into detalle values (autoincre_deta.nextval, cantidad, fk_codi_celu, fk_codi_pedi);
+    commit;
+end;
+
+create or replace
+procedure actualizar_detalle(codigo number, cantidad number, fk_codi_celu number, fk_codi_pedi number)
+is 
+begin
+    update detalle set cant_deta=cantidad, fk_codi_celu=fk_codi_celu, fk_codi_pedi=fk_codi_pedi where codi_deta=codigo;
+    commit;
+end;
+
+create or replace
+procedure eliminar_detalle(codigo number)
+is
+begin
+    delete from detalle where codi_deta=codigo;
+    commit;
+end;
+
+--===========================FUNCIONES=================================
+--======================CELULAR Y DETALLE==============================
+create or replace
+function calcular_subtotal_producto(cantidad number, precio_unitario float)
+return float
+is
+begin
+return (cantidad * precio_unitario);
+end;
+
+create or replace
+function calcular_iva(total float, porcentaje number)
+return float
+is
+begin
+    return ((total * porcentaje)/100);
+end;
+
+--=========================VISTAS==============================
+create view pedido_detail as(
+select p.codi_pedi, p.fech_pedi, p.tota_pedi, p.obse_pedi, d.cant_deta, ce.marc_celu, ce.mode_celu, ce.prec_celu
+, de.capr_dien, de.case_dien, de.prov_dien, de.ciud_dien, cl.cedu_clie, cl.nomb_clie, cl.apel_clie
+, calcular_subtotal_producto(d.cant_deta, ce.prec_celu) as "subtotal por produ", calcular_iva(p.tota_pedi, 12) as "iva"
+from detalle d, pedido p, celular ce, direccion_envio de, cliente cl
+where d.fk_codi_celu = ce.codi_celu and d.fk_codi_pedi = p.codi_pedi and p.fk_codi_dien = de.codi_dien and p.fk_codi_clie = cl.codi_clie
+);
+
+create view pedido_detail_get_celulares as(
+select codi_pedi, codi_deta, cant_deta, marc_celu, mode_celu, prec_celu, codi_celu, codi_clie, codi_dien
+from detalle d, pedido p, celular ce, direccion_envio de, cliente cl
+where d.fk_codi_celu = ce.codi_celu and d.fk_codi_pedi = p.codi_pedi and p.fk_codi_dien = de.codi_dien and p.fk_codi_clie = cl.codi_clie
+);
+
+--===========================TRIGGERS=================================
+--===========================TABLAS===================================
+create table seguimiento_pedido(
+usuario varchar2(30) not null,
+fecha date not null,
+accion varchar2(10) not null,
+fech_pedi_nuev date,
+fech_pedi_ante date,
+tota_pedi_nuev number(8,2),
+tota_pedi_ante number(8,2),
+obse_pedi_nuev varchar2(60),
+obse_pedi_ante varchar2(60)
+);
+
+select * from seguimiento_pedido;
+--===========================TRIGGERS=================================
+--============================CLIENTE==================================
+create or replace
+trigger control_cliente
+before insert 
+on cliente
+for each row
+begin
+    :new.nomb_clie := initcap(:new.nomb_clie);
+    :new.apel_clie := initcap(:new.apel_clie);
+    :new.dire_clie := initcap(:new.dire_clie);
+end;
+--============================PEDIDO==================================
+create or replace
+trigger control_pedido
+before insert or update or delete
+on pedido
+for each row
+begin
+    if inserting then
+        insert into seguimiento_pedido values (user, sysdate, 'insertar', :new.fech_pedi, null, :new.tota_pedi, null
+        , :new.obse_pedi, null);
+    elsif updating then
+        insert into seguimiento_pedido values (user, sysdate, 'actualizar', :new.fech_pedi, :old.fech_pedi, :new.tota_pedi, :old.tota_pedi
+        , :new.obse_pedi, :old.obse_pedi);
+    elsif deleting then
+        insert into seguimiento_pedido values (user, sysdate, 'eliminar', null, :old.fech_pedi, null, :old.tota_pedi
+        , null, :old.obse_pedi);
+    end if;
+end;
+
+--******************* ADIGNACION DE PERMISOS ***************************
+--******************* TIENDA ***************************
+grant select, insert, update, delete on tienda.celular to tienda;
+grant select, insert, update, delete on tienda.cliente to tienda;
+grant select, insert, update, delete on tienda.detalle to tienda;
+grant select, insert, update, delete on tienda.direccion_envio to tienda;
+grant select, insert, update, delete on tienda.pedido to tienda;
+grant select on tienda.pedido_detail to tienda; --view
+grant select on pedido_detail_get_celulares to tienda; --view
+
+grant select, insert, update, delete on tienda.auth to tienda;
+
+--====================== GRANTE PROCEDURE =====================
+grant execute on tienda.insertar_celular to tienda;
+grant execute on tienda.actualizar_celular to tienda;
+grant execute on tienda.eliminar_celular to tienda;
+
+grant execute on tienda.insertar_cliente to tienda;
+grant execute on tienda.actualizar_cliente to tienda;
+grant execute on tienda.eliminar_cliente to tienda;
+
+grant execute on tienda.insertar_direccion_envio to tienda;
+grant execute on tienda.actualizar_direccion_envio to tienda;
+grant execute on tienda.eliminar_direccion_envio to tienda;
+
+grant execute on tienda.insertar_detalle to tienda;
+grant execute on tienda.actualizar_detalle to tienda;
+grant execute on tienda.eliminar_detalle to tienda;
+
+grant execute on tienda.insertar_pedido to tienda;
+grant execute on tienda.actualizar_pedido to tienda;
+grant execute on tienda.eliminar_pedido to tienda;
+--===========================================================
+
+--******************* CAJA1 ***************************
+grant select, insert on tienda.celular to caja1;
+grant select, insert on tienda.cliente to caja1;
+grant select, insert on tienda.detalle to caja1;
+grant select, insert on tienda.direccion_envio to caja1;
+grant select, insert on tienda.pedido to caja1;
+grant select on tienda.pedido_detail to caja1; --view
+grant select on tienda.pedido_detail_get_celulares to caja1; --view
+
+
+--====================== GRANTE PROCEDURE =====================
+grant execute on tienda.insertar_celular to caja1;
+grant execute on tienda.insertar_cliente to caja1;
+grant execute on tienda.insertar_direccion_envio to caja1;
+grant execute on tienda.insertar_detalle to caja1;
+grant execute on tienda.insertar_pedido to caja1;
+--===========================================================
+
+--******************* CAJA2 ***************************
+grant select, insert, update on tienda.celular to caja2;
+grant select, insert, update on tienda.cliente to caja2;
+grant select, insert, update on tienda.detalle to caja2;
+grant select, insert, update on tienda.direccion_envio to caja2;
+grant select, insert, update on tienda.pedido to caja2;
+grant select on tienda.pedido_detail to caja2; --view
+grant select on tienda.pedido_detail_get_celulares to caja2; --view
+
+--====================== GRANTE PROCEDURE =====================
+grant execute on tienda.insertar_celular to caja2;
+grant execute on tienda.actualizar_celular to caja2;
+
+grant execute on tienda.insertar_cliente to caja2;
+grant execute on tienda.actualizar_cliente to caja2;
+
+grant execute on tienda.insertar_direccion_envio to caja2;
+grant execute on tienda.actualizar_direccion_envio to caja2;
+
+grant execute on tienda.insertar_detalle to caja2;
+grant execute on tienda.actualizar_detalle to caja2;
+
+grant execute on tienda.insertar_pedido to caja2;
+grant execute on tienda.actualizar_pedido to caja2;
+--===========================================================
+
+--================== TABLA PARA EL USUARIO DEL LOGIN ==========================
+create sequence sq_auto_auth increment by 1 start with 1 nocache;
+create table auth(
+    codigo number primary key not null,
+    username varchar2(20) not null,
+    pass varchar2(20) not null
+);
+
+insert into auth values (sq_auto_auth.nextval, 'tienda', 'tienda');
+insert into auth values (sq_auto_auth.nextval, 'caja1', 'caja1');
+insert into auth values (sq_auto_auth.nextval, 'caja2', 'caja2');
+
+select * from auth;
+select * from auth where username = 'tienda';

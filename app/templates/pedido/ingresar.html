@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% block body %}
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+{% for message in messages%}
+<div class="alert alert-success" role="alert">
+  {{ message }}
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+
+<br>
+<div class="container">
+  <img src="{{ url_for('static', filename='samsung.png') }}" alt="" width="120" height="60" class="float-end">
+  <img src="{{ url_for('static', filename='apple.png') }}" alt="" width="50" height="60" class="float-end">
+  <img src="{{ url_for('static', filename='xiaomi.png') }}" alt="" width="50" height="60">
+  <img src="{{ url_for('static', filename='infinix.png') }}" alt="" width="120" height="60">
+</div>
+<div class="container text-center">
+  <div class="row align-items-center">
+    <h1>Realizar Pedido</h1>
+    <form method="post" action="{{ url_for('.insertar_pedido')}}">
+      <div class="container text-center">
+        <div class="row align-items-start">
+          <div class="col">
+            <h3>Celulares Disponibles</h3>
+            {% if celulares %}
+            <div class="form-check">
+              {% for celular in celulares %}
+              <div class="input-group mb-3">
+                <div class="input-group-text">
+                  <input class="form-check-input mt-0" type="checkbox" value="{{ celular[0] }}"
+                    aria-label="Checkbox for following text input" name="celulares">
+                </div>
+                <span class="input-group-text text-primary-emphasis">{{celular[1]}} - {{celular[2]}}</span>
+                <input type="text" class="form-control" aria-label="Text input with checkbox" placeholder="Cantidad"
+                  name="celular_{{ celular[0] }}">
+                <span class="input-group-text text-success">Precio - $</span>
+                <span class="input-group-text">{{ celular[9] }}</span>
+              </div>
+              {% endfor %}
+            </div>
+            {% else %}
+            <div class="alert alert-info" role="alert">
+              Lista Vacia, no hay Celulares Registrados.
+            </div>
+            {% endif %}
+          </div>
+          <label for="id_observa" class="form-label">Observaciones del Pedido</label>
+          <input type="text" class="form-control" id="id_observa" name="observa">
+        </div>
+      </div>
+      <hr>
+      <div class="container text-center">
+        <h3>Datos del Cliente</h3>
+        <div class="row align-items-start">
+          <div class="col">
+            <label for="id_nombre" class="form-label">Nombre</label>
+            <input type="text" class="form-control" id="id_nombre" name="nombre">
+            <label for="id_email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="id_email" name="email">
+          </div>
+          <div class="col">
+            <label for="id_apellido" class="form-label">Apellido</label>
+            <input type="text" class="form-control" id="id_apellido" name="apellido">
+            <label for="id_telefono" class="form-label">Telefono</label>
+            <input type="text" class="form-control" id="id_telefono" name="telefono">
+          </div>
+          <div class="col">
+            <label for="id_cedula" class="form-label">Cedula</label>
+            <input type="text" class="form-control" id="id_cedula" name="cedula">
+            <label for="id_direccion" class="form-label">Direccion</label>
+            <input type="text" class="form-control" id="id_direccion" name="direccion">
+          </div>
+        </div>
+      </div>
+      <hr>
+      <div class="container text-center">
+        <h3>Datos de la Direccion de Envio</h3>
+        <div class="row align-items-start">
+          <label for="id_calle_pri" class="form-label">Calle Princpial</label>
+          <input type="text" class="form-control" id="id_calle_pri" name="calle_pri">
+          <div class="col">
+            <label for="id_calle_sec" class="form-label">Calle Secundaria</label>
+            <input type="text" class="form-control" id="id_calle_sec" name="calle_sec">
+            <label for="id_ciudad" class="form-label">Ciudad</label>
+            <input type="text" class="form-control" id="id_ciudad" name="ciudad">
+            <label for="id_provincia" class="form-label">Provincia</label>
+            <input type="text" class="form-control" id="id_provincia" name="provincia">
+          </div>
+          <div class="col">
+            <label for="id_nume_depa" class="form-label">Numero de Departamento</label>
+            <input type="text" class="form-control" id="id_nume_depa" name="nume_depa">
+            <label for="id_referencia" class="form-label">Referencia</label>
+            <input type="text" class="form-control" id="id_referencia" name="referencia">
+            <label for="id_codi_postal" class="form-label">Codigo Postal</label>
+            <input type="text" class="form-control" id="id_codi_postal" name="codi_postal">
+          </div>
+        </div>
+        <div id="emailHelp" class="form-text">El pedido sera realizado.</div>
+        <button type="submit" class="btn btn-primary">Realizar Pedido <svg xmlns="http://www.w3.org/2000/svg" width="16"
+            height="16" fill="currentColor" class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
+            <path
+              d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z" />
+          </svg></button>
+    </form>
+  </div>
+  <br>
+</div>
+<div>
+  <br>
+</div>
+
+{% endblock %}

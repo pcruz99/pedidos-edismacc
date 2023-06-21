@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block body %}
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+{% for message in messages%}
+<div class="alert alert-success" role="alert">
+  {{ message }}
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+
+<div class="container text-center">
+  <div class="row align-items-start">
+    {% if direcciones_envio %}
+    <div class="col">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Calle Princpial</th>
+            <th scope="col">Calle Secundaria</th>
+            <th scope="col">No. Departamento</th>
+            <th scope="col">Referencia</th>
+            <th scope="col">Ciudad</th>
+            <th scope="col">Provincia</th>
+            <th scope="col">Codigo Postal</th>
+            <th scope="col">---</th>
+            <th scope="col">---</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for direccion_envio in direcciones_envio %}
+          <tr>
+            <th scope="row" class="text-center">{{ direccion_envio[1] }}</th>
+            <td class="text-center">{{ direccion_envio[2] }}</td>
+            <td class="text-center">{{ direccion_envio[3] }}</td>
+            <td class="text-center">{{ direccion_envio[4] }}</td>
+            <td class="text-center">{{ direccion_envio[5] }}</td>
+            <td class="text-center">{{ direccion_envio[6] }}</td>
+            <td class="text-center">{{ direccion_envio[7] }}</td>
+            <td><a href="actualizar_direccion_envio/{{ direccion_envio[0] }}" class="btn btn-primary">Editar</a></td>
+            <td><a href="eliminar_direccion_envio/{{ direccion_envio[0] }}" class="btn btn-primary">Eliminar</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info" role="alert">
+      Lista Vacia, no hay Direcciones de envio Registrados.
+    </div>
+    {% endif %}
+
+
+    <div class="col">
+      <div class="position-fixed m-5">
+        <h1>Registrar Direccion de Envio</h1>
+        <form method="post" action="{{ url_for('.insertar_direccion_envio') }}">
+          <div class="container text-center">
+            <div class="row align-items-start">
+              <label for="id_calle_pri" class="form-label">Calle Princpial</label>
+              <input type="text" class="form-control" id="id_calle_pri" name="calle_pri">
+              <label for="id_calle_sec" class="form-label">Calle Secundaria</label>
+              <input type="text" class="form-control" id="id_calle_sec" name="calle_sec">
+              <label for="id_referencia" class="form-label">Referencia</label>
+              <input type="text" class="form-control" id="id_referencia" name="referencia">
+              <div class="col">
+                <label for="id_ciudad" class="form-label">Ciudad</label>
+                <input type="text" class="form-control" id="id_ciudad" name="ciudad">
+                <label for="id_provincia" class="form-label">Provincia</label>
+                <input type="text" class="form-control" id="id_provincia" name="provincia">
+              </div>
+              <div class="col">
+                <label for="id_codi_postal" class="form-label">Codigo Postal</label>
+                <input type="text" class="form-control" id="id_codi_postal" name="codi_postal">
+                <label for="id_nume_depa" class="form-label">No. Departamento</label>
+                <input type="text" class="form-control" id="id_nume_depa" name="nume_depa">
+              </div>
+            </div>
+          </div>
+          <div id="emailHelp" class="form-text">Los datos del Direccion de envio seran registrados.</div>
+          <button type="submit" class="btn btn-primary">Agregar Datos <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
+            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z"/>
+          </svg></button>
+        </form>
+      </div>
+    </div>
+    <a href="{{url_for('direccion_envio.generar_reporte_die')}}">Generar reporte PDF</a>
+  </div>
+</div>
+{% endblock %}

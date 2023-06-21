@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block body %}
+<div class="container text-center position-absolute top-50 start-50 translate-middle">
+    <div class="row align-items-center">        
+        <form method="post" action="{{ url_for('.actualizar_celular', codi=celular[0]) }}">
+            <div class="container text-center">
+              <div class="row align-items-start">
+                <div class="col">
+                  <label for="id_marca" class="form-label">Marca</label>
+                  <input type="text" class="form-control" id="id_marca" name="marca" value="{{celular[1]}}">
+                  <label for="id_modelo" class="form-label">Modelo</label>
+                  <input type="text" class="form-control" id="id_modelo" name="modelo" value="{{celular[2]}}">
+                  <label for="id_color" class="form-label">Color</label>
+                  <input type="text" class="form-control" id="id_color" name="color" value="{{celular[3]}}">
+                </div>
+                <div class="col">
+                  <label for="id_camara" class="form-label">Camara</label>
+                  <input type="text" class="form-control" id="id_camara" name="camara" value="{{celular[4]}}">
+                  <label for="id_pantall" class="form-label">Pantalla</label>
+                  <input type="text" class="form-control" id="id_pantall" name="pantalla" value="{{celular[5]}}">
+                  <label for="id_cpu" class="form-label">CPU</label>
+                  <input type="text" class="form-control" id="id_cpu" name="cpu" value="{{celular[6]}}">
+                </div>
+                <div class="col">
+                  <label for="id_ram" class="form-label">RAM (GB)</label>
+                  <input type="text" class="form-control" id="id_ram" name="ram" value="{{celular[7]}}">                  
+                  <label for="id_almacenamiento" class="form-label">Almacenamiento (GB)</label>
+                  <input type="text" class="form-control" id="id_almacenamiento" name="almacenamiento" value="{{celular[8]}}">
+                  <label for="id_precio" class="form-label">Precio ($)</label>
+                  <input type="text" class="form-control" id="id_precio" name="precio" value="{{celular[9]}}">
+                </div>            
+              </div>
+            </div>
+            <div id="emailHelp" class="form-text">Los datos del Celular serán actualizados.</div>
+            <button type="submit" class="btn btn-primary">Editar Datos</button>
+          </form>          
+    </div>
+    <br>
+    <a href="{{ url_for('.Index') }}" class="btn btn-primary">Regresar a la Lista</a>
+    <a href="{{ url_for('pedido.insertar_pedido') }}" class="btn btn-primary">Regresar al menu Principal</a>
+</div>
+{% endblock %}

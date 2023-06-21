@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block body %}
+
+<div class="container text-center position-absolute top-50 start-50 translate-middle" >
+  <div class="row align-items-center">
+    <form method="post" action="{{ url_for('.actualizar_pedido', codi=pedido[0]) }}">
+      <div class="container text-center">
+        <div class="row align-items-start" >
+          <div class="col">
+            <label for="id_calle_pri" class="form-label">Fecha del Pedido</label>
+            <input type="fecha_pedido" class="form-control" id="id_fecha_pedido" name="fecha_pedido" value="{{pedido[1]}}" readonly>
+            <label for="id_observ" class="form-label">Observacion</label>
+            <input type="text" class="form-control" id="id_observ" name="observ" value="{{pedido[3]}}">
+            <label for="id_valor_tota" class="form-label">Valor Total</label>
+            <input type="text" class="form-control" id="id_valor_tota" name="valor_tota" value="{{pedido[2]}}" disabled>
+          </div>
+          <div class="col">
+            <label for="id_celu_pedi" class="form-label">Celulares Pedidos</label>
+            {% for deta in detalle %}                      
+            <div class="input-group mb-3" id="id_celu_pedi">
+              <span class="input-group-text">{{ deta[3] }} - {{ deta[4] }}</span>
+              <input type="text" aria-label="cantidad" class="form-control" name="celular_{{ deta [6] }}" value="{{ deta[2] }}" placeholder="Cantidad" required>              
+              <span class="input-group-text">x ${{ deta[5] }}</span>
+              <a href="{{ url_for('.eliminar_detalle', codi=deta[1]) }}" class="btn btn-primary">Eliminar</a>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      <div id="emailHelp" class="form-text">Los datos del Pedido serán actualizados.</div>
+      <button type="submit" class="btn btn-primary">Editar Datos</button>
+    </form>
+  </div>
+  <br>
+  <a href="{{ url_for('.Index') }}" class="btn btn-primary">Regresar a la Lista</a>
+  <a href="{{ url_for('pedido.insertar_pedido') }}" class="btn btn-primary">Regresar al menu Principal</a>
+</div>
+{% endblock %}

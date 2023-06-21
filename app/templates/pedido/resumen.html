@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block body %}
+<div class="container text-center">
+    <div class="row align-items-start">        
+        <div class="col">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Subtotal Por Telefono</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for subtotal in subtotales %}
+                    <tr>
+                        <th scope="row" class="text-center">{{ subtotal }}</th>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <label for="id_observa" class="form-label">Subtotal = </label>
+            <label for="id_observa" class="form-label text-primary">{{ total-iva }}</label><br>
+            <label for="id_observa" class="form-label">IVA = </label>
+            <label for="id_observa" class="form-label text-primary">{{ iva }}</label><br>
+            <label for="id_observa" class="form-label">Total del Pedido = </label>
+            <label for="id_observa" class="form-label text-primary">{{ total }}</label>
+        </div>
+
+        
+        <a href="{{ url_for('pedido.insertar_pedido') }}" class="btn btn-primary">Regresar al menu Principal</a>
+    </div>
+</div>
+{% endblock %}
